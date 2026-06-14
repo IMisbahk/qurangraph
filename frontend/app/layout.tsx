@@ -39,6 +39,12 @@ export default function RootLayout({
       </body>
     </html>
     <Analytics/>
+    <footer className="flex justify-center items-center gap-1.5 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-500">
+      <span>Developed with</span>
+      <span aria-label="love" role="img">❤️</span>
+      <span>by</span>
+      <a href="https://imisbahk.vercel.app" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-900 transition-colors font-medium">Misbah Khursheed</a>
+    </footer>
   </>
   
 
