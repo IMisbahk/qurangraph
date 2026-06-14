@@ -6,9 +6,9 @@ import SearchBar from "@/components/search/SearchBar";
 import type { StatsResponse } from "@/types";
 
 export const metadata: Metadata = {
-  title: "QuranGraph — The Semantic Map of the Quran",
+  title: "QuranGraph — Discover Hidden Connections",
   description:
-    "Explore 6,236 Quran verses through AI embeddings, semantic graph intelligence, and community detection. The world's first interactive Quran knowledge graph.",
+    "Explore the Quran through beautiful visual connections, discover deep thematic topics, and search concepts naturally.",
 };
 
 // Isolated async component — streamed independently, won't block the hero
@@ -23,33 +23,41 @@ async function StatsSection() {
 
   return (
     <>
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <StatCard value={stats.verse_count.toLocaleString()} label="Verses" description="Complete Quran" />
-          <StatCard value={stats.edge_count.toLocaleString()} label="Connections" description="Semantic edges" />
-          <StatCard value={stats.community_count.toString()} label="Communities" description="Thematic clusters" />
-          <StatCard value={stats.avg_degree.toFixed(1)} label="Avg Degree" description="Connections/verse" />
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <StatCard value={stats.verse_count.toLocaleString()} label="Verses Mapped" description="The complete Quran" />
+          <StatCard value={stats.edge_count.toLocaleString()} label="Connections Found" description="Related verses linked together" />
+          <StatCard value={stats.community_count.toString()} label="Thematic Topics" description="Distinct clusters of meaning" />
         </div>
       </section>
 
       {stats.most_connected_verse && (
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-          <div className="border border-gray-200 rounded-2xl p-6">
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
-              Most Connected Verse
+        <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+          <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/50 rounded-3xl p-8 sm:p-10 shadow-sm">
+            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+              <svg className="w-32 h-32 text-emerald-900" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L22 12L12 22L2 12L12 2Z" />
+              </svg>
+            </div>
+            
+            <p className="text-sm font-semibold text-emerald-600 tracking-wide uppercase mb-4 flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Featured Insight
             </p>
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 relative z-10">
               <div>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{stats.most_connected_verse}</p>
-                <p className="text-sm text-gray-500">
-                  {stats.most_connected_verse_degree} direct connections in the graph
+                <h3 className="text-3xl font-bold text-gray-900 mb-2">{stats.most_connected_verse}</h3>
+                <p className="text-base text-gray-600 max-w-md">
+                  This verse forms the heart of the network, directly connecting to {stats.most_connected_verse_degree} other verses.
                 </p>
               </div>
               <Link
                 href={`/verse/${encodeURIComponent(stats.most_connected_verse)}`}
-                className="shrink-0 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-700 transition-colors"
+                className="shrink-0 px-6 py-3 bg-emerald-600 text-white text-sm font-medium rounded-xl shadow-sm hover:bg-emerald-700 hover:shadow transition-all focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
               >
-                Explore
+                Discover Why →
               </Link>
             </div>
           </div>
@@ -61,13 +69,13 @@ async function StatsSection() {
 
 function StatsSkeleton() {
   return (
-    <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white border border-gray-200 rounded-2xl p-5 animate-pulse">
-            <div className="h-8 bg-gray-100 rounded w-16 mb-2" />
-            <div className="h-4 bg-gray-100 rounded w-24 mb-1" />
-            <div className="h-3 bg-gray-100 rounded w-20" />
+    <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-white/50 border border-gray-100 rounded-3xl p-6 animate-pulse">
+            <div className="h-10 bg-gray-100 rounded w-20 mb-3" />
+            <div className="h-5 bg-gray-100 rounded w-32 mb-2" />
+            <div className="h-4 bg-gray-50 rounded w-24" />
           </div>
         ))}
       </div>
@@ -77,30 +85,50 @@ function StatsSkeleton() {
 
 export default function HomePage() {
   return (
-    <div className="min-h-[calc(100vh-56px)]">
+    <div className="min-h-[calc(100vh-56px)] selection:bg-emerald-100 selection:text-emerald-900">
+      {/* Hero Background Elements with subtle Islamic Geometric Pattern */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none bg-white">
+        {/* Geometric pattern overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='1'%3E%3Cpath d='M30 0l15 15-15 15L15 15 30 0zm0 30l15 15-15 15-15-15L30 30zm-15-15l15 15-15 15-15-15 15-15zm30 0l15 15-15 15-15-15 15-15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-emerald-50/50 blur-[100px]" />
+        <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] rounded-full bg-teal-50/40 blur-[100px]" />
+      </div>
+
       {/* Hero — renders immediately, no async blocking */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-600 mb-8">
-          <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-          Powered by local AI · Ollama embeddinggemma:300m
+      <section className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 text-center">
+        
+        {/* Bismillah Calligraphy */}
+        <div className="font-arabic text-3xl sm:text-4xl text-emerald-800/60 mb-8" dir="rtl">
+          بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
         </div>
 
-        <h1 className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-6">
-          The Semantic Map<br />
-          <span className="text-gray-400">of the Quran</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full text-sm font-medium text-emerald-700 mb-8 shadow-sm border border-emerald-100/50">
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          A beautiful new way to explore
+        </div>
+
+        <h1 className="text-5xl sm:text-7xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-6">
+          Discover the Hidden <br className="hidden sm:block" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Connections</span>
         </h1>
 
-        <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Explore over 6,000 verses through embeddings, graph intelligence,
-          and semantic relationships. Discover thematic clusters, find connected
-          verses, and navigate the Quran as a living knowledge graph.
+        <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-12 leading-relaxed">
+          Journey through the Quran like never before. See how verses interlink, explore deep thematic topics, and ask questions naturally to find the answers you seek.
         </p>
 
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-6 relative z-20">
           <SearchBar />
         </div>
-        <p className="text-xs text-gray-400">
-          Try: &ldquo;patience during hardship&rdquo; · &ldquo;mercy of Allah&rdquo; · &ldquo;Day of Judgment&rdquo;
+        <p className="text-sm text-gray-400 font-medium">
+          Try asking: <span className="text-gray-600">"What does it say about patience during hardship?"</span>
         </p>
       </section>
 
@@ -110,45 +138,48 @@ export default function HomePage() {
       </Suspense>
 
       {/* Feature cards — always visible immediately */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Three Ways to Explore</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">Whether you're looking for a specific topic, wanting to see the big picture, or just exploring.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
             href="/graph"
             icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="3" strokeWidth={1.5} />
-                <circle cx="4" cy="6" r="2" strokeWidth={1.5} />
-                <circle cx="20" cy="6" r="2" strokeWidth={1.5} />
-                <circle cx="4" cy="18" r="2" strokeWidth={1.5} />
-                <circle cx="20" cy="18" r="2" strokeWidth={1.5} />
-                <path strokeWidth={1.5} d="M6 6.5L10 9M14 9l4-2.5M6 17.5L10 15M14 15l4 2.5" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
               </svg>
             }
-            title="Graph Explorer"
-            description="Navigate the full knowledge graph. Zoom, pan, filter by community, and click any verse to explore its connections."
-            cta="Open Graph →"
+            title="Visual Explorer"
+            description="See the beautiful network of connections. Click on any verse to see how it links to others across different chapters."
+            cta="Open Map"
+            colorClass="from-blue-50 to-indigo-50 text-indigo-600"
           />
           <FeatureCard
             href="/communities"
             icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
               </svg>
             }
-            title="Community Explorer"
-            description="Discover thematic clusters automatically detected by Louvain community detection across all 6,236 verses."
-            cta="View Communities →"
+            title="Themes & Topics"
+            description="Browse through naturally formed clusters of meaning. From profound themes of mercy to stories of past nations."
+            cta="Browse Topics"
+            colorClass="from-emerald-50 to-teal-50 text-emerald-600"
           />
           <FeatureCard
             href="/search"
             icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
               </svg>
             }
-            title="Semantic Search"
-            description="Type any concept or question in natural language. AI embeddings surface the most relevant verses instantly."
-            cta="Start Searching →"
+            title="Smart Search"
+            description="Don't know the exact phrasing? Type what you're thinking of, and our intelligent search will find the right verses."
+            cta="Try Search"
+            colorClass="from-amber-50 to-orange-50 text-orange-600"
           />
         </div>
       </section>
@@ -158,35 +189,41 @@ export default function HomePage() {
 
 function StatCard({ value, label, description }: { value: string; label: string; description: string }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5">
-      <p className="text-3xl font-bold text-gray-900 mb-1">{value}</p>
-      <p className="text-sm font-semibold text-gray-700">{label}</p>
-      <p className="text-xs text-gray-400 mt-0.5">{description}</p>
+    <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow group">
+      <p className="text-4xl font-extrabold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">{value}</p>
+      <p className="text-base font-semibold text-gray-800">{label}</p>
+      <p className="text-sm text-gray-500 mt-1">{description}</p>
     </div>
   );
 }
 
 function FeatureCard({
-  href, icon, title, description, cta,
+  href, icon, title, description, cta, colorClass
 }: {
   href: string;
   icon: React.ReactNode;
   title: string;
   description: string;
   cta: string;
+  colorClass: string;
 }) {
   return (
     <Link
       href={href}
-      id={`feature-${title.toLowerCase().replace(/\s+/g, "-")}`}
-      className="group block bg-white border border-gray-200 rounded-2xl p-6 hover:border-gray-400 hover:shadow-md transition-all"
+      className="group flex flex-col h-full bg-white border border-gray-100 rounded-3xl p-8 hover:border-gray-200 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
     >
-      <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center mb-4 text-gray-700 group-hover:bg-gray-900 group-hover:text-white transition-colors">
+      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${colorClass} group-hover:scale-110 transition-transform duration-300`}>
         {icon}
       </div>
-      <h2 className="text-base font-semibold text-gray-900 mb-2">{title}</h2>
-      <p className="text-sm text-gray-500 leading-relaxed mb-4">{description}</p>
-      <p className="text-sm font-medium text-gray-900">{cta}</p>
+      <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
+      <p className="text-base text-gray-500 leading-relaxed mb-8 flex-grow">{description}</p>
+      
+      <div className="flex items-center text-sm font-bold text-gray-900 group-hover:text-emerald-600 transition-colors mt-auto">
+        {cta}
+        <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </div>
     </Link>
   );
 }

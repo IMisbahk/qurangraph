@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Amiri } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
 import NavBar from "@/components/layout/NavBar";
@@ -8,6 +8,13 @@ import { Analytics } from "@vercel/analytics/next"
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const amiri = Amiri({
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-amiri",
   display: "swap",
 });
 
@@ -29,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return ( <>
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${amiri.variable}`}>
       <body className="bg-white text-gray-900 antialiased min-h-screen">
         <QueryProvider>
           <NavBar />
