@@ -97,3 +97,15 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Razorpay button navbar fit */
+.razorpay-btn-wrapper {
+  display: inline-flex;
+  align-items: center;
+  transform: scale(0.85);
+  transform-origin: center;
+}
+.razorpay-btn-wrapper form {
+  margin: 0;
+  line-height: 0;
+}
