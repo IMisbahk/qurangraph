@@ -25,12 +25,15 @@ export default async function VersePage({ params }: Props) {
   let neighbors = null;
 
   try {
-    [verse, neighbors] = await Promise.all([
-      api.getVerse(verseId),
-      api.getNeighbors(verseId, 12),
-    ]);
+    verse = await api.getVerse(verseId);
   } catch {
     notFound();
+  }
+
+  try {
+    neighbors = await api.getNeighbors(verseId, 12);
+  } catch {
+    neighbors = []; // Silently fallback to no neighbors if it fails (e.g. 404 No neighbors found)
   }
 
   if (!verse) notFound();
