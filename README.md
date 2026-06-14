@@ -70,8 +70,8 @@ ollama pull embeddinggemma:300m
 ### 3. Setup Backend Environment
 ```bash
 # Clone the repository
-git clone https://github.com/imisbahk/quran-project.git
-cd quran-project
+git clone https://github.com/imisbahk/qurangraph.git
+cd qurangraph
 
 # Initialize virtual env
 python3 -m venv venv
