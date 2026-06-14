@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { getCommunityColor, formatVerseId, formatSimilarity } from "@/lib/utils";
+import type { Verse, NeighborResult } from "@/types";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -21,8 +22,8 @@ export default async function VersePage({ params }: Props) {
   const { id } = await params;
   const verseId = decodeURIComponent(id);
 
-  let verse = null;
-  let neighbors = null;
+  let verse: Verse | null = null;
+  let neighbors: NeighborResult[] | null = null;
 
   try {
     verse = await api.getVerse(verseId);
