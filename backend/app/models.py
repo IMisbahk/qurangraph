@@ -95,3 +95,12 @@ class NeighborResult(BaseModel):
     ayah: int
     surah_name_en: str
     community: Optional[int] = None
+
+
+class SurahMetadata(BaseModel):
+    surah: int
+    surah_name_en: str
+    surah_name_ar: str
+    revelation_place: str
+    verse_count: int
+

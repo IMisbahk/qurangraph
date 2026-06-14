@@ -35,7 +35,11 @@ def get_graph() -> Optional[nx.Graph]:
 
 
 def find_path(source: str, target: str) -> Optional[list[str]]:
-    """Find shortest path between two verse IDs."""
+    """
+    Find shortest path between two verse IDs.
+    If no path exists (disconnected components), we dynamically find the
+    closest semantic bridge between their respective components to link them.
+    """
     if _graph is None:
         return None
     if source not in _graph or target not in _graph:
@@ -44,7 +48,53 @@ def find_path(source: str, target: str) -> Optional[list[str]]:
         path = nx.shortest_path(_graph, source=source, target=target, weight=None)
         return path
     except nx.NetworkXNoPath:
-        return None
+        logger.info(f"No direct path between {source} and {target}. Finding semantic bridge...")
+        # Get the connected component for both
+        comp_s = nx.node_connected_component(_graph, source)
+        comp_t = nx.node_connected_component(_graph, target)
+        
+        from backend.services.faiss_service import search_by_verse_id
+        
+        best_bridge = None
+        
+        # 1. Search for source's closest neighbors in comp_t
+        try:
+            neighbors = search_by_verse_id(source, top_k=500)
+            for n_id, sim in neighbors:
+                if n_id in comp_t:
+                    best_bridge = (source, n_id)
+                    logger.info(f"Bridged via source neighbor: {source} -> {n_id}")
+                    break
+        except Exception as e:
+            logger.error(f"Error querying source neighbors: {e}")
+            
+        # 2. If not found, search target's closest neighbors in comp_s
+        if not best_bridge:
+            try:
+                neighbors = search_by_verse_id(target, top_k=500)
+                for n_id, sim in neighbors:
+                    if n_id in comp_s:
+                        best_bridge = (n_id, target)
+                        logger.info(f"Bridged via target neighbor: {n_id} -> {target}")
+                        break
+            except Exception as e:
+                logger.error(f"Error querying target neighbors: {e}")
+                
+        # 3. Fallback: direct link if we couldn't resolve components
+        if not best_bridge:
+            best_bridge = (source, target)
+            logger.info(f"Fallback direct bridge: {source} -> {target}")
+            
+        # Temporarily copy the graph and add the bridge edge
+        g_temp = _graph.copy()
+        g_temp.add_edge(best_bridge[0], best_bridge[1])
+        
+        try:
+            path = nx.shortest_path(g_temp, source=source, target=target, weight=None)
+            return path
+        except Exception as e:
+            logger.error(f"Error finding path in bridged graph: {e}")
+            return [source, target]
     except nx.NodeNotFound:
         return None
 
