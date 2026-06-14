@@ -28,24 +28,24 @@ export default function CommunityList({ communities }: CommunityListProps) {
             className="group block bg-white border border-gray-200 rounded-2xl p-5 hover:border-gray-400 hover:shadow-md transition-all"
           >
             {/* Color stripe + ID */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-4 min-w-0 w-full">
               <div
                 className="w-8 h-8 rounded-lg shrink-0"
                 style={{ backgroundColor: color }}
               />
-              <div>
-                <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">
-                  Community
+              <div className="min-w-0 flex-grow">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                  Theme {c.community_id}
                 </p>
-                <p className="text-lg font-bold text-gray-900 leading-none">
-                  {c.community_id}
-                </p>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 truncate" title={c.theme_name}>
+                  {c.theme_name || `Thematic Cluster ${c.community_id}`}
+                </h3>
               </div>
-              <div className="ml-auto">
-                <span className="text-sm font-semibold text-gray-900">
+              <div className="ml-auto shrink-0 text-right">
+                <span className="text-sm font-bold text-gray-900">
                   {c.size}
                 </span>
-                <p className="text-xs text-gray-400">verses</p>
+                <p className="text-[10px] text-gray-400">verses</p>
               </div>
             </div>
 

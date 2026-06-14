@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { getCommunityColor, formatVerseId, formatSimilarity } from "@/lib/utils";
 import type { Verse, NeighborResult } from "@/types";
 import AudioPlayer from "@/components/shared/AudioPlayer";
+import AddToPlaylistButton from "@/components/playlists/AddToPlaylistButton";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -79,8 +80,9 @@ export default async function VersePage({ params }: Props) {
               Surah {verse.surah}, Verse {verse.ayah} · Quran #{verse.ayah_quran}
             </p>
           </div>
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-2">
             <AudioPlayer ayahQuran={verse.ayah_quran} size="lg" />
+            <AddToPlaylistButton verseId={verse.verse_id} />
           </div>
         </div>
       </div>

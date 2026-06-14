@@ -99,21 +99,80 @@ def find_path(source: str, target: str) -> Optional[list[str]]:
         return None
 
 
+COMMUNITY_THEME_NAMES = {
+    12: "Opposition to Allah and His Messenger",
+    10: "Belief, Righteous Deeds, and Forgiveness",
+    11: "Steadfastness and Striving for Truth",
+    1: "Majesty and Omnipotence of Allah",
+    3: "Monotheism and Trust in Allah",
+    24: "Creation of the Heavens and the Earth",
+    25: "Divine Revelations and Prophethood",
+    80: "Repentance and Forgiveness",
+    903: "Woe to the Deniers of the Day of Judgment",
+    14: "Guidance and Straying",
+    73: "The Fallacy of Idolatry and False Worship",
+    88: "Adherence to Revelation and Allah's Awareness",
+    28: "Creation and Resurrection",
+    140: "Distribution of Provision (Rizq)",
+    13: "Allah as a Sufficient Witness",
+    41: "The Quran as a Reminder for the Mindful",
+    8: "Establishing Prayer and Charity",
+    31: "Returning to Allah on the Day of Judgment",
+    476: "Destruction of the Transgressors",
+    382: "Denial and Mockery of the Day of Judgment",
+    76: "Revelation from the Lord of the Worlds",
+    2151: "Oaths by the Cosmic Signs & Time",
+    2197: "The Favors of the Lord (Surah Ar-Rahman)",
+    159: "Regret of the Wrongdoers",
+    383: "Destruction of Past Civilizations",
+    228: "Reflecting on the End of Past Civilizations",
+    850: "Skepticism of Resurrection from Dust and Bones",
+    422: "Abundance of Food, Fruits, and Gardens",
+    0: "The Ultimate Mercy of the Almighty",
+    2401: "Rhetorical Questions of the Calamity",
+    6: "The Abbreviated Letters (Al-Muqatta'at)",
+    909: "The Reward of the Righteous in Paradise",
+    113: "Blind Following of Forefathers",
+    139: "The Transience of Worldly Life",
+    423: "Exaltation and Glorification of Allah",
+    935: "Stories of Past Messengers and Rejecters",
+    952: "Contemplation of Sky, Earth, and Nature",
+    775: "How Allah Rewards the Good-Doers",
+    882: "Mocking Warning to the Disbelievers",
+    1769: "Fruits and Delights of Paradise",
+    1805: "Maidens of Paradise (Hur al-Ayn)",
+}
+
+
+def get_community_theme_name(community_id: int) -> str:
+    """Return mapped human-readable theme name, or fallback."""
+    return COMMUNITY_THEME_NAMES.get(community_id, f"Thematic Concept Cluster {community_id}")
+
+
 def get_community_stats() -> list[dict]:
-    """Return all community statistics."""
+    """Return all community statistics enriched with theme names."""
     if _community_stats is None:
         return []
-    return _community_stats
+    
+    enriched = []
+    for c in _community_stats:
+        c_copy = dict(c)
+        c_copy["theme_name"] = get_community_theme_name(c["community_id"])
+        enriched.append(c_copy)
+    return enriched
 
 
 def get_community_by_id(community_id: int) -> Optional[dict]:
-    """Return stats for a specific community."""
+    """Return stats for a specific community enriched with theme name."""
     if _community_stats is None:
         return None
     for stats in _community_stats:
         if stats["community_id"] == community_id:
-            return stats
+            stats_copy = dict(stats)
+            stats_copy["theme_name"] = get_community_theme_name(community_id)
+            return stats_copy
     return None
+
 
 
 def get_node_attributes(verse_id: str) -> Optional[dict]:

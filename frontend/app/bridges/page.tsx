@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Compass, Sparkles, AlertCircle, ArrowDown, HelpCircle, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
 import AudioPlayer from "@/components/shared/AudioPlayer";
+import AddToPlaylistButton from "@/components/playlists/AddToPlaylistButton";
 import { getCommunityColor, formatSimilarity } from "@/lib/utils";
 import type { Verse, SurahMetadata, PathResult } from "@/types";
 
@@ -230,9 +231,19 @@ export default function BridgesPage() {
                 ? "Direct Semantic Connection (1 Step)" 
                 : `Connected in ${pathResult.length} steps`}
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <div className="flex justify-center mt-3">
+              <Link
+                href={`/graph?path=${encodeURIComponent(pathResult.path.join(","))}`}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm shadow-emerald-500/10 hover:shadow"
+              >
+                <Compass size={13} />
+                View Path on Knowledge Graph
+              </Link>
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
               Tracing transition flow from Surah {pathResult.verses[0].surah_name_en} to Surah {pathResult.verses[pathResult.verses.length - 1].surah_name_en}
             </p>
+
           </div>
 
           <div className="relative pl-6 sm:pl-8 border-l border-emerald-100 ml-4 space-y-12">
@@ -260,6 +271,7 @@ export default function BridgesPage() {
                             {verse.surah_name_en} {verse.surah}:{verse.ayah}
                           </Link>
                           <AudioPlayer ayahQuran={verse.ayah_quran} size="sm" />
+                          <AddToPlaylistButton verseId={verse.verse_id} />
                         </div>
                         
                         {verse.community !== null && (

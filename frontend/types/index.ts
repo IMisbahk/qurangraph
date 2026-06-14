@@ -66,6 +66,7 @@ export interface CommunityStats {
   central_verse_id: string;
   central_verse_english: string;
   representative_verses: string[];
+  theme_name?: string;
 }
 
 export interface StatsResponse {

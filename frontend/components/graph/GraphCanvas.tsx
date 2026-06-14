@@ -9,6 +9,7 @@ interface GraphCanvasProps {
   highlightIds?: Set<string>;
   onNodeClick?: (node: GraphNode) => void;
   filterCommunity?: number | null;
+  pathNodes?: string[];
 }
 
 export interface GraphCanvasRef {
@@ -22,7 +23,7 @@ interface FilteredData {
 }
 
 const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
-  ({ data, highlightIds, onNodeClick, filterCommunity }, ref) => {
+  ({ data, highlightIds, onNodeClick, filterCommunity, pathNodes }, ref) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fgRef = useRef<any>(null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,9 +59,15 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
     }, [data, filterCommunity]);
 
     useImperativeHandle(ref, () => ({
-      zoomToNode: (_id: string) => {
+      zoomToNode: (id: string) => {
         if (fgRef.current) {
-          fgRef.current.zoomToFit(400);
+          const node = filteredData.nodes.find((n) => n.id === id);
+          if (node && node.x !== undefined && node.y !== undefined) {
+            fgRef.current.centerAt(node.x, node.y, 800);
+            fgRef.current.zoom(6, 800);
+          } else {
+            fgRef.current.zoomToFit(400);
+          }
         }
       },
       resetZoom: () => {
@@ -68,15 +75,44 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
       },
     }));
 
+    // Zoom to fit path nodes when they are loaded
+    useEffect(() => {
+      if (fgRef.current && pathNodes && pathNodes.length > 0 && filteredData.nodes.length > 0) {
+        const timer = setTimeout(() => {
+          fgRef.current.zoomToFit(800, 120, (node: any) => pathNodes.includes(node.id));
+        }, 800);
+        return () => clearTimeout(timer);
+      }
+    }, [pathNodes, filteredData]);
+
+    const isPathEdge = useCallback((link: object) => {
+      if (!pathNodes || pathNodes.length < 2) return false;
+      const l = link as GraphEdge;
+      const src = typeof l.source === "string" ? l.source : (l.source as GraphNode).id;
+      const tgt = typeof l.target === "string" ? l.target : (l.target as GraphNode).id;
+      
+      for (let i = 0; i < pathNodes.length - 1; i++) {
+        const p1 = pathNodes[i];
+        const p2 = pathNodes[i + 1];
+        if ((src === p1 && tgt === p2) || (src === p2 && tgt === p1)) {
+          return true;
+        }
+      }
+      return false;
+    }, [pathNodes]);
+
     const nodeColor = useCallback(
       (node: object) => {
         const n = node as GraphNode;
+        if (pathNodes && pathNodes.includes(n.id)) {
+          return "#ea580c"; // Highlight path nodes in orange
+        }
         if (highlightIds && highlightIds.size > 0) {
           return highlightIds.has(n.id) ? getCommunityColor(n.community) : "#e5e7eb";
         }
         return getCommunityColor(n.community);
       },
-      [highlightIds]
+      [highlightIds, pathNodes]
     );
 
     const nodeVal = useCallback((node: object) => {
@@ -95,6 +131,9 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
 
     const linkColor = useCallback(
       (link: object) => {
+        if (isPathEdge(link)) {
+          return "#ea580c"; // Glowing orange for path
+        }
         const l = link as GraphEdge;
         const src = typeof l.source === "string" ? l.source : (l.source as GraphNode).id;
         const tgt = typeof l.target === "string" ? l.target : (l.target as GraphNode).id;
@@ -103,13 +142,16 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
         }
         return "rgba(209,213,219,0.3)";
       },
-      [highlightIds]
+      [highlightIds, isPathEdge]
     );
 
     const linkWidth = useCallback((link: object) => {
+      if (isPathEdge(link)) {
+        return 4.5;
+      }
       const l = link as GraphEdge;
       return Math.max(0.5, l.similarity * 2);
-    }, []);
+    }, [isPathEdge]);
 
     const handleNodeClick = useCallback(
       (node: object) => {
@@ -146,7 +188,13 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
         onNodeClick={handleNodeClick}
         cooldownTicks={100}
         onEngineStop={() => {
-          if (fgRef.current) fgRef.current.zoomToFit(400);
+          if (fgRef.current) {
+            if (pathNodes && pathNodes.length > 0) {
+              fgRef.current.zoomToFit(800, 120, (node: any) => pathNodes.includes(node.id));
+            } else {
+              fgRef.current.zoomToFit(400);
+            }
+          }
         }}
         backgroundColor="#ffffff"
         width={typeof window !== "undefined" ? window.innerWidth : 1200}
@@ -168,3 +216,4 @@ const GraphCanvas = forwardRef<GraphCanvasRef, GraphCanvasProps>(
 
 GraphCanvas.displayName = "GraphCanvas";
 export default GraphCanvas;
+

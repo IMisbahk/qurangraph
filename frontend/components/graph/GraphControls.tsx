@@ -11,6 +11,7 @@ interface GraphControlsProps {
   onResetZoom: () => void;
   highlightQuery: string;
   onHighlightQuery: (q: string) => void;
+  communitiesStats?: any[];
 }
 
 export default function GraphControls({
@@ -20,6 +21,7 @@ export default function GraphControls({
   onResetZoom,
   highlightQuery,
   onHighlightQuery,
+  communitiesStats,
 }: GraphControlsProps) {
   const [open, setOpen] = useState(false);
 
@@ -28,8 +30,13 @@ export default function GraphControls({
     new Set(data.nodes.map((n) => n.community))
   ).sort((a, b) => a - b);
 
+  const getThemeName = (cid: number) => {
+    const stats = communitiesStats?.find((c) => c.community_id === cid);
+    return stats?.theme_name ? `Theme ${cid}: ${stats.theme_name}` : `Theme ${cid}`;
+  };
+
   return (
-    <div className="absolute top-4 left-4 z-30 flex flex-col gap-2">
+    <div className="absolute top-4 left-4 z-30 flex flex-col gap-2 max-w-[260px] sm:max-w-xs">
       {/* Zoom controls */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         <button
@@ -52,22 +59,22 @@ export default function GraphControls({
           value={highlightQuery}
           onChange={(e) => onHighlightQuery(e.target.value)}
           placeholder="Highlight nodes..."
-          className="w-36 text-xs px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-900 text-gray-900 placeholder-gray-400"
+          className="w-full text-xs px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-900 text-gray-900 placeholder-gray-400"
         />
       </div>
 
       {/* Community filter */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden w-48 sm:w-56">
         <button
           id="graph-community-filter-toggle"
           onClick={() => setOpen((o) => !o)}
-          className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          className="w-full px-3 py-2.5 flex items-center justify-between text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors text-left"
         >
-          <span>
-            {filterCommunity !== null ? `Community ${filterCommunity}` : "All Communities"}
+          <span className="truncate pr-2">
+            {filterCommunity !== null ? getThemeName(filterCommunity) : "All Themes"}
           </span>
           <svg
-            className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`w-3 h-3 transition-transform shrink-0 ${open ? "rotate-180" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -82,9 +89,9 @@ export default function GraphControls({
               onClick={() => { onFilterChange(null); setOpen(false); }}
               className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-gray-50 transition-colors ${filterCommunity === null ? "bg-gray-50 font-semibold" : ""}`}
             >
-              <span className="w-2.5 h-2.5 rounded-full bg-gray-300 inline-block" />
-              All Communities
-              <span className="ml-auto text-gray-400">{data.nodes.length}</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-gray-300 inline-block shrink-0" />
+              <span className="truncate">All Themes</span>
+              <span className="ml-auto text-gray-400 text-[10px] shrink-0">{data.nodes.length}</span>
             </button>
             {communities.map((cid) => {
               const count = data.nodes.filter((n) => n.community === cid).length;
@@ -99,8 +106,8 @@ export default function GraphControls({
                     className="w-2.5 h-2.5 rounded-full inline-block shrink-0"
                     style={{ backgroundColor: getCommunityColor(cid) }}
                   />
-                  Community {cid}
-                  <span className="ml-auto text-gray-400">{count}</span>
+                  <span className="truncate pr-1">{getThemeName(cid)}</span>
+                  <span className="ml-auto text-gray-400 text-[10px] shrink-0">{count}</span>
                 </button>
               );
             })}

@@ -67,6 +67,8 @@ class CommunityStats(BaseModel):
     central_verse_id: str
     central_verse_english: str
     representative_verses: list[str]
+    theme_name: Optional[str] = None
+
 
 
 class StatsResponse(BaseModel):

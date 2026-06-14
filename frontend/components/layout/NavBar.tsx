@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/bridges", label: "Bridges" },
   { href: "/graph", label: "Graph" },
   { href: "/communities", label: "Communities" },
+  { href: "/playlists", label: "Playlists" },
   { href: "/search", label: "Search" },
 ];
 

@@ -1,14 +1,21 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import type { GraphNode, NeighborResult } from "@/types";
 import GraphCanvas, { type GraphCanvasRef } from "@/components/graph/GraphCanvas";
 import NodePanel from "@/components/graph/NodePanel";
 import GraphControls from "@/components/graph/GraphControls";
+import { X, MapPin } from "lucide-react";
 
-export default function GraphPage() {
+function GraphContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const communityParam = searchParams.get("community");
+  const pathParam = searchParams.get("path");
+
   const canvasRef = useRef<GraphCanvasRef>(null);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [neighbors, setNeighbors] = useState<NeighborResult[]>([]);
@@ -17,11 +24,30 @@ export default function GraphPage() {
   const [highlightQuery, setHighlightQuery] = useState("");
   const [highlightIds, setHighlightIds] = useState<Set<string>>(new Set());
 
+  // Parse path nodes from search param
+  const pathNodes = pathParam ? pathParam.split(",") : [];
+
   const { data: graphData, isLoading, error } = useQuery({
     queryKey: ["graph"],
     queryFn: () => api.getGraph(),
     staleTime: Infinity,
   });
+
+  const { data: communitiesStats } = useQuery({
+    queryKey: ["communities"],
+    queryFn: () => api.getCommunities(),
+    staleTime: Infinity,
+  });
+
+  // Sync community filter from URL query param
+  useEffect(() => {
+    if (communityParam) {
+      const cid = parseInt(communityParam, 10);
+      if (!isNaN(cid)) {
+        setFilterCommunity(cid);
+      }
+    }
+  }, [communityParam]);
 
   // Highlight nodes matching search query
   useEffect(() => {
@@ -67,6 +93,10 @@ export default function GraphPage() {
     },
     [graphData, handleNodeClick]
   );
+
+  const clearPath = () => {
+    router.push("/graph");
+  };
 
   if (isLoading) {
     return (
@@ -115,6 +145,7 @@ export default function GraphPage() {
         highlightIds={highlightIds}
         onNodeClick={handleNodeClick}
         filterCommunity={filterCommunity}
+        pathNodes={pathNodes}
       />
 
       <GraphControls
@@ -124,7 +155,30 @@ export default function GraphPage() {
         onResetZoom={() => canvasRef.current?.resetZoom()}
         highlightQuery={highlightQuery}
         onHighlightQuery={setHighlightQuery}
+        communitiesStats={communitiesStats}
       />
+
+      {/* Floating Active Path Info Banner */}
+      {pathNodes.length > 0 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md text-white border border-slate-800 px-4 py-2.5 rounded-2xl shadow-xl z-30 flex items-center gap-3.5 max-w-md animate-slide-up">
+          <div className="w-7 h-7 rounded-lg bg-orange-600 flex items-center justify-center shrink-0">
+            <MapPin size={14} className="text-white animate-pulse" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider">Active Path Bridge</p>
+            <p className="text-xs font-semibold truncate text-slate-100 mt-0.5">
+              {pathNodes[0]} → {pathNodes[pathNodes.length - 1]} ({pathNodes.length} nodes)
+            </p>
+          </div>
+          <button
+            onClick={clearPath}
+            className="w-6 h-6 rounded-md hover:bg-white/10 flex items-center justify-center transition-colors ml-2"
+            title="Clear path view"
+          >
+            <X size={14} className="text-slate-400 hover:text-white" />
+          </button>
+        </div>
+      )}
 
       {selectedNode && (
         <NodePanel
@@ -143,5 +197,20 @@ export default function GraphPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function GraphPage() {
+  return (
+    <Suspense fallback={
+      <div className="h-[calc(100vh-56px)] flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="w-10 h-10 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-medium">Loading knowledge graph...</p>
+        </div>
+      </div>
+    }>
+      <GraphContent />
+    </Suspense>
   );
 }
