@@ -95,3 +95,12 @@ export interface PathResult {
   length: number;
   verses: Verse[];
 }
+
+export interface SurahMetadata {
+  surah: number;
+  surah_name_en: string;
+  surah_name_ar: string;
+  revelation_place: string;
+  verse_count: number;
+}
+

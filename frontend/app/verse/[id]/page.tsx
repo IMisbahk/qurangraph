@@ -4,6 +4,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { getCommunityColor, formatVerseId, formatSimilarity } from "@/lib/utils";
 import type { Verse, NeighborResult } from "@/types";
+import AudioPlayer from "@/components/shared/AudioPlayer";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -69,12 +70,19 @@ export default async function VersePage({ params }: Props) {
           </span>
         </div>
 
-        <h1 className="text-4xl font-bold text-gray-900 mb-1">
-          {verse.surah_name_en}
-        </h1>
-        <p className="text-gray-500">
-          Surah {verse.surah}, Verse {verse.ayah} · Quran #{verse.ayah_quran}
-        </p>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-1">
+              {verse.surah_name_en}
+            </h1>
+            <p className="text-gray-500">
+              Surah {verse.surah}, Verse {verse.ayah} · Quran #{verse.ayah_quran}
+            </p>
+          </div>
+          <div className="shrink-0">
+            <AudioPlayer ayahQuran={verse.ayah_quran} size="lg" />
+          </div>
+        </div>
       </div>
 
       {/* Arabic text */}

@@ -7,6 +7,8 @@ import RazorpayButton from "./RazorpayButton";
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/chapters", label: "Chapters" },
+  { href: "/bridges", label: "Bridges" },
   { href: "/graph", label: "Graph" },
   { href: "/communities", label: "Communities" },
   { href: "/search", label: "Search" },

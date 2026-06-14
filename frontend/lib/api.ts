@@ -6,6 +6,7 @@ import type {
   StatsResponse,
   NeighborResult,
   PathResult,
+  SurahMetadata,
 } from "@/types";
 
 const isServer = typeof window === "undefined";
@@ -62,4 +63,14 @@ export const api = {
     fetchJson<PathResult>(
       `/path?source=${encodeURIComponent(source)}&target=${encodeURIComponent(target)}`
     ),
+
+  getSurahs: (): Promise<SurahMetadata[]> =>
+    fetchJson<SurahMetadata[]>("/surahs"),
+
+  getVerseOfTheDay: (): Promise<Verse> =>
+    fetchJson<Verse>("/verse/day"),
+
+  getSurahVerses: (surahId: number): Promise<Verse[]> =>
+    fetchJson<Verse[]>(`/surah/${surahId}`),
 };
+
