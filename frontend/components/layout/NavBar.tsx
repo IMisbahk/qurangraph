@@ -54,7 +54,7 @@ export default function NavBar() {
 
           {/* GitHub link */}
           <a
-            href="https://github.com"
+            href="https://github.com/imisbahk/qurangraph"
             target="_blank"
             rel="noopener noreferrer"
             className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"

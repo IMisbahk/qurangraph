@@ -127,6 +127,18 @@ Run both servers locally to interact with the application:
 | `GET` | `/stats` | Return high-level repository stats (verse count, edge count, density). |
 | `GET` | `/health` | Server status check. |
 
+## 🌐 Current Deployment Configuration (Vercel + VM Backend)
+
+This project is deployed using a hybrid architecture to support local vector search in production:
+
+*   **Frontend**: Hosted on **Vercel** (`https://qurangraph.vercel.app` or similar deployment).
+    *   Configured with the environment variable `BACKEND_URL=<the-vm-ip>` to direct server-to-server requests.
+    *   Client-side API requests are securely proxied via Next.js rewrites at `/api/backend/*` to bypass browser Mixed Content (HTTPS -> HTTP) blocks.
+*   **Backend**: Hosted on an **Azure Virtual Machine**.
+    *   Runs a local **Ollama** server hosting the `embeddinggemma:300m` model.
+    *   Hosts the FastAPI application on port `8000` via `uvicorn backend.main:app --host 0.0.0.0 --port 8000`.
+    *   Services all semantic search requests, degree computations, shortest path queries, and graph topology fetches locally using the built FAISS index and NetworkX database.
+
 ---
 
 ## 📁 Repository Structure
